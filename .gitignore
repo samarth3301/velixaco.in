@@ -1,5 +1,4 @@
-node_modules/
+venv/
+.gemini/
 .DS_Store
-.antigravity/
-dist/
-build/
+*.log
