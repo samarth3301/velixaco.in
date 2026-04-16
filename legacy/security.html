@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Velixaco | Security Verification</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@600;800;900&family=Inter:wght@400;500;600;700&display=swap');
+    
+    .outfit { font-family: 'Outfit', sans-serif; }
+    .inter { font-family: 'Inter', sans-serif; }
+    body { background-color: #F7F8F0; }
+
+    /* Luxury Input Style */
+    .otp-input:focus {
+        border-color: #1A2E1C;
+        box-shadow: 0 0 0 4px rgba(26, 46, 28, 0.1);
+    }
+  </style>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            darkestGreen: '#1A2E1C',
+            softBeige: '#F7F8F0',
+            footerBg: '#0b0907',
+            footerText: '#F4F0EA'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="inter outline-none bg-white md:bg-softBeige">
+
+  <!-- SIMPLE BRAND HEADER -->
+  <header class="py-12 flex justify-center">
+    <a href="index.html" class="outfit text-4xl font-black text-darkestGreen tracking-tighter uppercase">Velixaco</a>
+  </header>
+
+  <!-- SECURITY CONTENT -->
+  <main class="max-w-md mx-auto px-6 pb-24">
+    
+    <div class="bg-white rounded-[48px] p-10 md:shadow-[0_60px_100px_-20px_rgba(26,46,28,0.12)] border border-gray-100">
+        <h1 class="text-4xl font-black text-black outfit tracking-tight mb-10">Verify mobile number</h1>
+
+        <!-- User Identity Box -->
+        <div class="flex items-center justify-between p-5 bg-softBeige rounded-3xl border border-gray-100 mb-10">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center text-black border border-gray-200">
+                    <i data-lucide="user" class="w-7 h-7"></i>
+                </div>
+                <div>
+                    <p class="text-base font-bold text-black">Parth Arora</p>
+                    <p class="text-[13px] text-gray-700 font-medium">+91 8700383626</p>
+                </div>
+            </div>
+            <button class="text-[12px] font-black text-black hover:opacity-60 transition-opacity uppercase tracking-widest">Switch</button>
+        </div>
+
+        <!-- Instructions -->
+        <p class="text-[15px] text-black font-medium leading-relaxed mb-8">
+            Enter the One Time Password (OTP) that we sent to your verified mobile device to confirm your identity.
+        </p>
+
+        <!-- OTP FORM -->
+        <form action="#" class="space-y-8">
+            <div>
+                <label for="otp" class="block text-xs font-black uppercase tracking-[0.2em] text-black mb-4">Enter OTP</label>
+                <input type="text" id="otp" placeholder="6-digit code" class="otp-input w-full px-6 py-5 border-2 border-gray-100 bg-gray-50 rounded-2xl outline-none transition-all text-2xl tracking-[0.25em] font-black text-center text-black">
+            </div>
+
+            <button type="submit" class="w-full bg-darkestGreen text-white py-6 rounded-full font-black text-[14px] uppercase tracking-[0.25em] shadow-2xl hover:translate-y-[-2px] active:scale-95 transition-all">
+                Verify mobile number
+            </button>
+        </form>
+
+        <!-- RESEND -->
+        <div class="mt-10 text-center">
+            <button class="text-[13px] text-black font-black uppercase tracking-widest hover:opacity-60 transition-opacity">Resend OTP</button>
+        </div>
+
+        <!-- DIVIDER -->
+        <div class="relative py-10">
+            <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-100"></div></div>
+            <div class="relative flex justify-center text-[11px] font-bold uppercase tracking-widest text-black bg-white px-4">or</div>
+        </div>
+
+        <!-- SECONDARY ACTIONS -->
+        <div class="space-y-4">
+            <button class="w-full py-4 border-2 border-gray-100 rounded-full font-bold text-sm text-black hover:bg-gray-50 transition-all flex items-center justify-center gap-3">
+                <i data-lucide="message-square" class="w-4 h-4 text-black"></i>
+                Send OTP to WhatsApp
+            </button>
+            <button class="w-full py-4 border-2 border-gray-100 rounded-full font-bold text-sm text-black hover:bg-gray-50 transition-all flex items-center justify-center gap-3">
+                <i data-lucide="key" class="w-4 h-4 text-black"></i>
+                Sign in with a passkey
+            </button>
+        </div>
+    </div>
+
+    <!-- FOOTER LINKS -->
+    <div class="mt-12 flex flex-wrap justify-center gap-6 text-[11px] text-black font-black uppercase tracking-widest">
+        <a href="#" class="hover:underline">Conditions of Use</a>
+        <a href="#" class="hover:underline">Privacy Notice</a>
+        <a href="#" class="hover:underline">Help</a>
+    </div>
+    <p class="mt-6 text-center text-[10px] text-black font-bold uppercase tracking-widest opacity-60">© 2026 Velixaco Horology Platform</p>
+
+  </main>
+
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>
