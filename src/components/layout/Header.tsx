@@ -58,6 +58,8 @@ export const Header = ({ variant = "dark" }: HeaderProps) => {
               <Link href="/orders" className="text-[11px] font-black uppercase tracking-[0.4em] text-white/60 hover:text-white hover:translate-x-2 transition-all">Orders</Link>
               <Link href="/contact" className="text-[11px] font-black uppercase tracking-[0.4em] text-white/60 hover:text-white hover:translate-x-2 transition-all">Contact</Link>
               <Link href="/team" className="text-[11px] font-black uppercase tracking-[0.4em] text-white/60 hover:text-white hover:translate-x-2 transition-all">Team</Link>
+              <Link href="/faq" className="text-[11px] font-black uppercase tracking-[0.4em] text-white/60 hover:text-white hover:translate-x-2 transition-all">FAQ</Link>
+              <Link href="/privacy" className="text-[11px] font-black uppercase tracking-[0.4em] text-white/60 hover:text-white hover:translate-x-2 transition-all">Privacy</Link>
               <Link href="/terms" className="text-[11px] font-black uppercase tracking-[0.4em] text-white/60 hover:text-white hover:translate-x-2 transition-all">Terms</Link>
             </div>
           </div>

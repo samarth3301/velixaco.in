@@ -40,10 +40,10 @@ export const Footer = () => {
             <div className="min-w-[120px]">
               <h3 className="text-[15px] font-semibold mb-6 text-white font-inter uppercase tracking-wider">Quick Links</h3>
               <ul className="space-y-3.5 text-[#9a9a9a] text-[14px]">
-                <li className="hover:text-white cursor-pointer transition-colors">FAQ</li>
+                <li className="hover:text-white cursor-pointer transition-colors"><Link href="/faq">FAQ</Link></li>
                 <li className="hover:text-white cursor-pointer transition-colors">Digital Atelier</li>
-                <li className="hover:text-white cursor-pointer transition-colors">Privacy Policy</li>
-                <li className="hover:text-white cursor-pointer transition-colors">Terms of Service</li>
+                <li className="hover:text-white cursor-pointer transition-colors"><Link href="/privacy">Privacy Policy</Link></li>
+                <li className="hover:text-white cursor-pointer transition-colors"><Link href="/terms">Terms of Service</Link></li>
               </ul>
             </div>
 
