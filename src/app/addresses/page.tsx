@@ -6,7 +6,6 @@ import Image from "next/image";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Plus, ChevronLeft, ChevronRight, Star } from "lucide-react";
-import { products } from "@/lib/data";
 import { cn } from "@/lib/utils";
 
 export default function AddressesPage() {
@@ -61,55 +60,6 @@ export default function AddressesPage() {
 
         </div>
 
-        <hr className="border-gray-200 mb-20" />
-
-        {/* RELATED ITEMS */}
-        <div>
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-bold text-black font-inter">Related to items you viewed</h2>
-            <div className="flex gap-2">
-              <button className="w-10 h-10 border border-gray-300 rounded-full flex items-center justify-center hover:bg-white transition-all shadow-sm"><ChevronLeft className="w-5 h-5" /></button>
-              <button className="w-10 h-10 border border-gray-300 rounded-full flex items-center justify-center hover:bg-white transition-all shadow-sm"><ChevronRight className="w-5 h-5" /></button>
-            </div>
-          </div>
-
-          <div className="flex gap-8 overflow-x-auto no-scrollbar pb-8">
-            {products.slice(0, 6).map((w) => (
-              <div key={w.id} className="min-w-[280px] group cursor-pointer">
-                <Link href={`/product/${w.id}`}>
-                  <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all flex flex-col h-full">
-                    <div className="aspect-square bg-soft-beige rounded-xl flex items-center justify-center p-4 mb-4 relative overflow-hidden">
-                      <div className="relative w-[90%] h-full group-hover:scale-110 transition-transform duration-700">
-                        <Image src={w.img} alt={w.name} fill className="object-contain" />
-                      </div>
-                      {w.badge && (
-                        <span className="absolute top-3 left-3 bg-red-600 text-[9px] font-black text-white px-2 py-1 rounded-sm uppercase tracking-tighter">
-                          {w.badge}
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex-1 flex flex-col gap-1 px-1">
-                      <h4 className="text-[13px] font-bold text-black leading-tight group-hover:text-blue-600 transition-colors line-clamp-2">{w.name}</h4>
-                      <div className="flex items-center gap-1 mt-1">
-                        <div className="flex text-orange-400">
-                          {[1, 2, 3, 4, 5].map((s) => (
-                            <Star key={s} className={cn("w-3 h-3", s <= 4 && "fill-current")} />
-                          ))}
-                        </div>
-                        <span className="text-[10px] text-black">12,50{w.id}</span>
-                      </div>
-                      <div className="mt-2 flex items-baseline gap-2">
-                        <span className="text-sm font-bold text-red-700">{w.price}</span>
-                        {w.oldPrice && <span className="text-[10px] text-gray-400 line-through">{w.oldPrice}</span>}
-                      </div>
-                      <p className="text-[10px] text-black font-medium mt-1">FREE delivery <span className="font-bold">Tomorrow, 15 Apr</span></p>
-                    </div>
-                  </div>
-                </Link>
-              </div>
-            ))}
-          </div>
-        </div>
 
       </main>
 

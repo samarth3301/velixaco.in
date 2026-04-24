@@ -6,7 +6,6 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { useCart } from "@/context/CartContext";
 import { CheckCircle, Star, Trash2 } from "lucide-react";
-import { products } from "@/lib/data";
 import { cn } from "@/lib/utils";
 
 export default function CartPage() {
@@ -18,8 +17,6 @@ export default function CartPage() {
   }, 0);
 
   const formattedTotal = "₹" + totalPrice.toLocaleString("en-IN");
-
-  const recommendations = products.slice(0, 5);
 
   return (
     <div className="inter outline-none bg-soft-beige min-h-screen flex flex-col">
@@ -162,42 +159,6 @@ export default function CartPage() {
                   <Link href="/checkout" className="w-full bg-white text-[#004225] py-5 rounded-full font-black flex items-center justify-center gap-2 hover:bg-[#F4F0EA] transition-all shadow-2xl active:scale-95 text-[12px] uppercase tracking-[0.2em]">
                     Secure Checkout
                   </Link>
-                </div>
-              </div>
-
-              {/* RECOMMENDATIONS */}
-              <div className="bg-white rounded-[32px] p-8 shadow-sm border border-gray-100">
-                <h3 className="font-bold text-darkest-green mb-6 font-inter">Collector&apos;s Recommendations</h3>
-                <div className="flex flex-col gap-6">
-                  {recommendations.map((w) => (
-                    <div key={w.id} className="flex gap-4 group cursor-pointer">
-                      <div className="w-20 h-20 bg-soft-beige rounded-xl flex items-center justify-center p-2 flex-shrink-0 group-hover:scale-105 transition-transform relative">
-                        <Link href={`/product/${w.id}`} className="block w-full h-full relative">
-                          <Image src={w.img} alt={w.name} fill className="object-contain mix-blend-multiply" />
-                        </Link>
-                      </div>
-                      <div className="flex-1 flex flex-col justify-center gap-1">
-                        <Link href={`/product/${w.id}`}>
-                          <h4 className="text-[13px] font-bold text-darkest-green leading-tight group-hover:text-blue-600 transition-colors">{w.name}</h4>
-                        </Link>
-                        <div className="flex items-center gap-1">
-                          <div className="flex text-orange-400">
-                            {[1, 2, 3, 4, 5].map((s) => (
-                              <Star key={s} className={cn("w-3 h-3", s <= 4 && "fill-current")} />
-                            ))}
-                          </div>
-                          <span className="text-[10px] text-gray-400">12{w.id}</span>
-                        </div>
-                        <p className="text-sm font-bold text-red-700">{w.price}</p>
-                        <button 
-                          onClick={() => {}}
-                          className="mt-1 text-[10px] font-bold bg-yellow-400 hover:bg-yellow-500 py-1.5 px-3 rounded-full text-center transition-all w-fit"
-                        >
-                          Add to cart
-                        </button>
-                      </div>
-                    </div>
-                  ))}
                 </div>
               </div>
             </div>

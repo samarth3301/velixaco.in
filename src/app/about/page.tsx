@@ -79,7 +79,7 @@ export default function AboutPage() {
 
         {/* Scroll Indicator */}
         <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4">
-           <Reveal delay={800} className="w-[1px] h-16 bg-gradient-to-b from-white to-transparent opacity-30"></Reveal>
+           {/* <Reveal delay={800} className="w-[1px] h-16 bg-gradient-to-b from-white to-transparent opacity-30" /> */}
         </div>
       </section>
 

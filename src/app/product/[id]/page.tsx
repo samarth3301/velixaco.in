@@ -1,35 +1,50 @@
 "use client";
 
-import { use } from "react";
+import { use, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { products } from "@/lib/data";
-import { ShoppingCart, ShieldCheck, Truck, Star, Send, Check, ArrowRight } from "lucide-react";
+import { ShoppingCart, ShieldCheck, Truck, Star, Send, Check } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useState } from "react";
-import { ProductCard } from "@/components/product/ProductCard";
 import { cn } from "@/lib/utils";
+import { Product } from "@/types";
 
 export default function ProductPage({ params: paramsPromise }: { params: Promise<{ id: string }> }) {
   const params = use(paramsPromise);
   const { id } = params;
-  const product = products.find((p) => p.id === id) || products[0];
   const { addToCart } = useCart();
-  
+
+  const [product, setProduct] = useState<Product | null>(null);
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
 
+  useEffect(() => {
+    const loadProduct = async () => {
+      try {
+        const response = await fetch(`/api/products/${id}`);
+        if (response.ok) {
+          const apiProduct = await response.json();
+          setProduct(apiProduct);
+        }
+      } catch (error) {
+        console.error("Error loading product:", error);
+      }
+    };
+
+    loadProduct();
+  }, [id]);
+
   const handleAddToCart = () => {
+    if (!product) return;
     addToCart(product, qty);
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
 
-  const relatedProducts = products.filter((p) => p.id !== product.id).slice(0, 4);
 
   return (
     <div className="inter outline-none relative overflow-x-hidden text-darkest-green min-h-screen flex flex-col">
@@ -42,28 +57,24 @@ export default function ProductPage({ params: paramsPromise }: { params: Promise
         <div className="absolute bottom-[20%] left-[-10%] w-[40vw] h-[40vw] bg-deep-green/[0.04] rounded-full blur-[100px]"></div>
       </div>
 
-      <main className="max-w-[1400px] mx-auto px-6 pt-32 pb-32 flex-1">
-        <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-24 relative">
-          
-          {/* Ambient Backglow for Image */}
-          <div className="absolute left-[15%] top-1/2 -translate-y-1/2 w-[30vw] h-[30vw] bg-white rounded-full blur-[120px] opacity-[0.08] z-0 pointer-events-none"></div>
+      <main className="w-full pt-24 pb-32 flex-1">
+        {product ? (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-7xl mx-auto px-6">
 
-          {/* Left: Big Product Image */}
-          <div className="flex-1 w-full relative z-10 flex justify-center items-center animate-fade-slide">
-            <div className="relative group cursor-crosshair w-full aspect-square max-w-[600px] flex justify-center items-center">
-              <div className="relative w-[85%] h-full animate-product-float group-hover:scale-[1.15] transition-transform duration-700 ease-out z-10">
-                <Image 
-                  src={product.img} 
-                  alt={product.name} 
-                  fill 
-                  className="object-contain drop-shadow-[0_40px_50px_rgba(0,0,0,0.5)]"
+            {/* Product Image - Left Column */}
+            <div className="bg-soft-beige rounded-[40px] p-8 md:p-16 flex items-center justify-center min-h-[500px] md:min-h-[600px]">
+              <div className="relative w-full h-full max-w-[500px] max-h-[500px]">
+                <Image
+                  src={product.img}
+                  alt={product.name}
+                  fill
+                  className="object-contain"
                 />
               </div>
             </div>
-          </div>
 
-          {/* Right: Premium Info Card */}
-          <div className="flex-1 w-full z-10 animate-fade-slide delay-100">
+            {/* Product Info - Right Column */}
+            <div>
             <div className="bg-darkest-green p-10 md:p-14 rounded-[40px] shadow-[0_30px_70px_rgba(0,0,0,0.4)] relative overflow-hidden">
               
               <div className="absolute -top-[50%] -left-[50%] w-[200%] h-[200%] bg-gradient-to-tr from-transparent via-white/5 to-transparent rotate-45 pointer-events-none"></div>
@@ -145,13 +156,18 @@ export default function ProductPage({ params: paramsPromise }: { params: Promise
                   <span className="text-sm font-bold text-white">Free Express Delivery</span>
                 </div>
               </div>
-
+            </div>
             </div>
           </div>
-        </div>
+        ) : (
+          <div className="flex items-center justify-center min-h-[400px]">
+            <p className="text-xl text-gray-500">Loading product...</p>
+          </div>
+        )}
       </main>
 
       {/* Review Section */}
+      {product && (
       <section className="w-full bg-darkest-green py-24 border-t border-white/10">
         <div className="max-w-4xl mx-auto px-6">
           <div className="flex flex-col items-center text-center mb-16">
@@ -222,24 +238,7 @@ export default function ProductPage({ params: paramsPromise }: { params: Promise
           </form>
         </div>
       </section>
-
-      {/* Related Products */}
-      <section className="w-full bg-darkest-green py-24 border-t border-white/10">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex items-end justify-between mb-16">
-            <h2 className="font-outfit text-5xl font-black text-white tracking-tight">More Watches</h2>
-            <Link href="/" className="text-white/80 font-bold flex items-center gap-2 group transition-all pb-2 text-lg hover:text-white">
-              View Collection <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 xl:gap-8 pb-12">
-            {relatedProducts.map((rp) => (
-              <ProductCard key={rp.id} product={rp} />
-            ))}
-          </div>
-        </div>
-      </section>
+      )}
 
       <Footer />
     </div>
