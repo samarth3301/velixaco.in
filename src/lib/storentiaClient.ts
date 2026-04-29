@@ -24,3 +24,13 @@ export async function fetchProduct(id: string) {
         return null
     }
 }
+
+export async function createContact(name: string, email: string, message: string) {
+    try {
+        const contact = await client.contacts.create({ name, email, message })
+        return contact
+    } catch (error) {
+        console.error("Error creating contact:", error)
+        return null
+    }
+}

@@ -2,10 +2,13 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Search, Compass, ShieldCheck, Music, Wallet, ChevronRight, Crown } from "lucide-react";
+import { Search, ShieldCheck, Music, Wallet, ChevronRight, Crown, AlertCircle, CheckCircle } from "lucide-react";
 
 export default function ContactPage() {
   const [recentOrder, setRecentOrder] = useState<any>(null);
+  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
   useEffect(() => {
     const orders = JSON.parse(localStorage.getItem("velixaco-orders") || "[]");
@@ -13,6 +16,38 @@ export default function ContactPage() {
       setRecentOrder(orders[0]);
     }
   }, []);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setStatus(null);
+
+    try {
+      const response = await fetch("/api/contacts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        setStatus({ type: "error", message: error.error || "Failed to submit contact form" });
+        return;
+      }
+
+      setStatus({ type: "success", message: "Thank you! Your message has been sent successfully." });
+      setFormData({ name: "", email: "", message: "" });
+    } catch (error) {
+      setStatus({ type: "error", message: "An error occurred. Please try again." });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="inter outline-none bg-soft-beige min-h-screen flex flex-col">
@@ -121,6 +156,71 @@ export default function ContactPage() {
             <button className="mt-8 text-[13px] font-black text-darkest-green uppercase tracking-widest flex items-center gap-2 hover:opacity-60 transition-all">
               Load more <ChevronRight className="w-4 h-4" />
             </button>
+          </div>
+
+          {/* CONTACT FORM */}
+          <div className="bg-white rounded-[40px] p-10 border border-gray-100 shadow-sm">
+            <h2 className="text-xl font-bold text-black mb-1">Get in touch</h2>
+            <p className="text-xs text-black font-semibold uppercase tracking-widest opacity-60 mb-8">Send us a message and we'll respond as soon as possible.</p>
+
+            {status && (
+              <div className={`mb-6 p-4 rounded-2xl flex items-center gap-3 ${status.type === "success" ? "bg-green-50 border border-green-200" : "bg-red-50 border border-red-200"}`}>
+                {status.type === "success" ? (
+                  <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
+                ) : (
+                  <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
+                )}
+                <span className={`text-sm font-medium ${status.type === "success" ? "text-green-700" : "text-red-700"}`}>
+                  {status.message}
+                </span>
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-bold text-black mb-2">Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  placeholder="Your name"
+                  required
+                  className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-darkest-green/20 focus:border-darkest-green"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-black mb-2">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  placeholder="your@email.com"
+                  required
+                  className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-darkest-green/20 focus:border-darkest-green"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-black mb-2">Message</label>
+                <textarea
+                  name="message"
+                  value={formData.message}
+                  onChange={handleInputChange}
+                  placeholder="Tell us how we can help..."
+                  required
+                  rows={5}
+                  className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-darkest-green/20 focus:border-darkest-green resize-none"
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-darkest-green text-white px-6 py-3 rounded-full font-black text-[13px] uppercase tracking-widest shadow-md hover:opacity-90 disabled:opacity-60 active:scale-95 transition-all"
+              >
+                {loading ? "Sending..." : "Send Message"}
+              </button>
+            </form>
           </div>
 
           {/* CATEGORY GRID */}
