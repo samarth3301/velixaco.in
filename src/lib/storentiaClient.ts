@@ -27,7 +27,11 @@ export async function fetchProduct(id: string) {
 
 export async function createContact(name: string, email: string, message: string) {
     try {
-        const contact = await client.contacts.create({ name, email, message })
+        const contact = await client.contacts.create({
+            name,
+            email,
+            message
+        })
         return contact
     } catch (error) {
         console.error("Error creating contact:", error)
