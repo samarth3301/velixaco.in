@@ -38,3 +38,13 @@ export async function createContact(name: string, email: string, message: string
         return null
     }
 }
+
+export async function fetchCollection(id: string) {
+    try {
+        const collection = await client.collections.get(id)
+        return collection
+    } catch (error) {
+        console.error("Error fetching collection:", error)
+        return null
+    }
+}

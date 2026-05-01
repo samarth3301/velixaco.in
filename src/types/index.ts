@@ -2,8 +2,8 @@ export interface Product {
   id: string;
   name: string;
   img: string;
-  price: string;
-  oldPrice?: string;
+  sellingPrice: string;
+  originalPrice?: string;
   description?: string;
   category?: string;
   badge?: string;
