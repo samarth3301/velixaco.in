@@ -16,7 +16,7 @@ export default function CheckoutPage() {
   const [orderPlaced, setOrderPlaced] = useState(false);
 
   const totalPrice = cart.reduce((acc, item) => {
-    const priceNum = parseFloat(item.price.replace(/[^\d.]/g, "")) || 0;
+    const priceNum = parseFloat(item.sellingPrice.replace(/[^\d.]/g, "")) || 0;
     return acc + priceNum * item.qty;
   }, 0);
 

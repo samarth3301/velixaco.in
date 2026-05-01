@@ -5,7 +5,7 @@ import { MarkdownRenderer } from "@/components/MarkdownRenderer";
 import { client } from "@/lib/storentiaClient";
 
 export default async function TermsPage() {
-  const pageId = "95efb122-18e1-4c01-b1e3-33e3f91f0343";
+  const pageId = "e111835b-0c7a-43a9-b05a-3f028ba32308";
   let pageData = { pageTitle: "Governance Protocols", content: "" };
 
   try {

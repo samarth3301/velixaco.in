@@ -38,15 +38,15 @@ export default function ProductsPage() {
     switch (sort) {
       case "price-low":
         items.sort((a, b) => {
-          const priceA = parseInt((a.price || "0").toString().replace(/[^\d]/g, ""));
-          const priceB = parseInt((b.price || "0").toString().replace(/[^\d]/g, ""));
+          const priceA = parseInt((a.sellingPrice || "0").toString().replace(/[^\d]/g, ""));
+          const priceB = parseInt((b.sellingPrice || "0").toString().replace(/[^\d]/g, ""));
           return priceA - priceB;
         });
         break;
       case "price-high":
         items.sort((a, b) => {
-          const priceA = parseInt((a.price || "0").toString().replace(/[^\d]/g, ""));
-          const priceB = parseInt((b.price || "0").toString().replace(/[^\d]/g, ""));
+          const priceA = parseInt((a.sellingPrice || "0").toString().replace(/[^\d]/g, ""));
+          const priceB = parseInt((b.sellingPrice || "0").toString().replace(/[^\d]/g, ""));
           return priceB - priceA;
         });
         break;

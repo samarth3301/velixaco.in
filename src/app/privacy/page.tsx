@@ -5,7 +5,7 @@ import { MarkdownRenderer } from "@/components/MarkdownRenderer";
 import { client } from "@/lib/storentiaClient";
 
 export default async function PrivacyPage() {
-  const pageId = "248cd036-a25f-46e0-aeae-5982da25041b";
+  const pageId = "e02dd8d7-89e4-4564-a553-de0fd58e70eb";
   let pageData = { pageTitle: "Privacy Policy", content: "" };
 
   try {

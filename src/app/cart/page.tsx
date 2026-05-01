@@ -5,14 +5,15 @@ import Link from "next/link";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { useCart } from "@/context/CartContext";
-import { CheckCircle, Star, Trash2 } from "lucide-react";
+import { CheckCircle, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function CartPage() {
   const { cart, removeFromCart, updateQty, cartCount, clearCart } = useCart();
 
   const totalPrice = cart.reduce((acc, item) => {
-    const priceNum = parseFloat(item.price.replace(/[^\d.]/g, "")) || 0;
+    const priceStr = item.sellingPrice || "0";
+    const priceNum = parseFloat(priceStr.replace(/[^\d.]/g, "")) || 0;
     return acc + priceNum * item.qty;
   }, 0);
 
@@ -78,7 +79,7 @@ export default function CartPage() {
                           <Link href={`/product/${item.id}`}>
                             <h3 className="text-xl font-bold text-darkest-green hover:text-blue-600 transition-colors">{item.name}</h3>
                           </Link>
-                          <p className="text-xl font-bold text-darkest-green">{item.price}</p>
+                          <p className="text-xl font-bold text-darkest-green">{item.sellingPrice}</p>
                         </div>
                         <p className="text-[10px] text-green-700 font-bold uppercase tracking-widest">In Stock</p>
                         <p className="text-[11px] text-gray-400">Eligible for FREE Shipping</p>
@@ -126,7 +127,7 @@ export default function CartPage() {
             </div>
 
             <p className="mt-8 text-[11px] text-black font-medium leading-relaxed px-6 opacity-80 uppercase tracking-wider">
-              The price and availability of items at Velixaco.in are subject to change. The shopping cart is a temporary place to store a list of your items and reflects each item's most recent price. Do you have a gift card or promotional code? We’ll ask you to enter your claim code when it’s time to pay.
+              The price and availability of items at Velixaco.in are subject to change. The shopping cart is a temporary place to store a list of your items and reflects each item&apos;s most recent price. Do you have a gift card or promotional code? We&apos;ll ask you to enter your claim code when it&apos;s time to pay.
             </p>
           </div>
 

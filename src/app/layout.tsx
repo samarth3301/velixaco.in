@@ -18,6 +18,7 @@ export const metadata: Metadata = {
 };
 
 import { CartProvider } from "@/context/CartContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 export default function RootLayout({
   children,
@@ -27,9 +28,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${outfit.variable}`}>
       <body className="antialiased min-h-screen flex flex-col">
-        <CartProvider>
-          {children}
-        </CartProvider>
+        <AuthProvider>
+          <CartProvider>
+            {children}
+          </CartProvider>
+        </AuthProvider>
       </body>
     </html>
   );

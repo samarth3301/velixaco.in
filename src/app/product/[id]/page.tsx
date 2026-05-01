@@ -91,11 +91,11 @@ export default function ProductPage({ params: paramsPromise }: { params: Promise
               
               <div className="relative flex items-end gap-5 mb-8 flex-wrap">
                 <span className="text-4xl md:text-6xl text-white font-black drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]">
-                  {product.price}.00
+                  {product.sellingPrice}
                 </span>
-                {product.oldPrice && (
+                {product.originalPrice && (
                   <span className="text-xl md:text-2xl text-white/40 line-through font-medium mb-1 opacity-70">
-                    {product.oldPrice}.00
+                    {product.originalPrice}
                   </span>
                 )}
                 <div className="bg-deep-green/5 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2 ml-2 border border-gray-300/50">
