@@ -9,7 +9,7 @@ interface MediaItem {
 export async function GET() {
   try {
     const media = await client.media.listMediaInFolder({
-      folderId: "1c52bd8a-5ac3-4a75-bd96-69504bdda473",
+      folderId: "dd8e7c52-0cb2-45a8-b4ce-bef468c8c853",
     });
 
     const images = (media || []).map((item: MediaItem) => ({
