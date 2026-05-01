@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronDown, ShoppingBag, User } from "lucide-react";
+import { ChevronDown, ShoppingBag, User, LogOut } from "lucide-react";
 import { useScroll } from "@/hooks/useScroll";
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 
 interface HeaderProps {
@@ -13,6 +14,7 @@ interface HeaderProps {
 export const Header = ({ variant = "dark" }: HeaderProps) => {
   const scrolled = useScroll(50);
   const { cartCount } = useCart();
+  const { user, logout } = useAuth();
   
   const isDark = variant === "dark";
   
@@ -33,12 +35,6 @@ export const Header = ({ variant = "dark" }: HeaderProps) => {
           className="text-sm font-black uppercase tracking-widest opacity-80 hover:opacity-100 transition-opacity"
         >
           Home
-        </Link>
-        <Link 
-          href="/services" 
-          className="text-sm font-black uppercase tracking-widest opacity-80 hover:opacity-100 transition-opacity"
-        >
-          Services
         </Link>
         <Link 
           href="/about" 
@@ -67,15 +63,36 @@ export const Header = ({ variant = "dark" }: HeaderProps) => {
       </div>
       
       <div className="flex items-center gap-4 md:gap-6">
-        <Link 
-          href="/profile" 
-          className={cn(
-            "p-2 cursor-pointer hover:scale-110 transition-transform opacity-90 hover:opacity-100",
-            (isDark || scrolled) ? "text-white" : "text-darkest-green"
-          )}
-        >
-          <User className="w-6 h-6" />
-        </Link>
+        {user ? (
+          <div className="group relative">
+            <button className={cn(
+              "p-2 cursor-pointer hover:scale-110 transition-transform opacity-90 hover:opacity-100 flex items-center gap-2",
+              (isDark || scrolled) ? "text-white" : "text-darkest-green"
+            )}>
+              <User className="w-6 h-6" />
+              <span className="text-sm opacity-80">{user.name || user.email}</span>
+            </button>
+            <div className="absolute top-full right-0 mt-2 w-40 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+              <div className="bg-darkest-green/95 backdrop-blur-xl border border-white/20 rounded-lg p-2 shadow-2xl">
+                <Link href="/profile" className="block text-white/80 hover:text-white text-sm px-3 py-2 rounded hover:bg-white/10">Profile</Link>
+                <button onClick={logout} className="w-full text-left text-white/80 hover:text-white text-sm px-3 py-2 rounded hover:bg-white/10 flex items-center gap-2">
+                  <LogOut className="w-4 h-4" />
+                  Logout
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <Link
+            href="/login"
+            className={cn(
+              "p-2 cursor-pointer hover:scale-110 transition-transform opacity-90 hover:opacity-100",
+              (isDark || scrolled) ? "text-white" : "text-darkest-green"
+            )}
+          >
+            <User className="w-6 h-6" />
+          </Link>
+        )}
         <Link 
           href="/cart" 
           className={cn(

@@ -10,10 +10,10 @@ export const BestSellers = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch("/api/products");
+        const response = await fetch("/api/collections/bcbf442c-13a9-4a36-9f60-1b615e7bc933/products");
         if (response.ok) {
           const data = await response.json();
-          setProducts(data);
+          setProducts(data.products);
         }
       } catch (error) {
         console.error("Error fetching products:", error);

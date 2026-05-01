@@ -56,10 +56,10 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         <div className="mt-6 flex flex-col items-start px-2">
           <h3 className="text-xl font-bold text-darkest-green">{product.name}</h3>
           <div className="flex items-center gap-3 mt-2">
-            {product.oldPrice && (
-              <span className="text-black line-through text-sm">{product.oldPrice}</span>
+            {product.originalPrice && (
+              <span className="text-black line-through text-sm">{product.originalPrice}</span>
             )}
-            <span className="text-[#FF3B30] font-bold text-lg">{product.price}</span>
+            <span className="text-[#FF3B30] font-bold text-lg">{product.sellingPrice}</span>
           </div>
         </div>
       </Link>
