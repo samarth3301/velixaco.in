@@ -53,7 +53,9 @@ export default function CheckoutPage() {
           method: "POST",
           headers: {
             "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
+          body: JSON.stringify({ totalAmount: totalPrice }),
         });
         const orderData = await response.json();
 

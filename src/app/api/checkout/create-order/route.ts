@@ -10,9 +10,14 @@ const razorpay = new Razorpay({
 export async function POST(request: Request) {
   try {
     const token = request.headers.get('authorization')?.replace('Bearer ', '') || ''
+    const { totalAmount } = await request.json()
 
     if (!token) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+    }
+
+    if (!totalAmount || totalAmount <= 0) {
+      return NextResponse.json({ error: 'Invalid amount' }, { status: 400 })
     }
 
     client.setAccessToken(token)
@@ -25,16 +30,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Cart is empty' }, { status: 400 })
     }
 
-    // Calculate total amount in paise
-    const amount = cart.items.reduce((acc: number, item: any) => {
-      const priceStr = item.product?.sellingPrice || "0"
-      const priceNum = parseFloat(priceStr.replace(/[^\d.]/g, "")) || 0;
-      return acc + (priceNum * (item.quantity || 1));
-    }, 0);
-
-    if (amount <= 0) {
-      return NextResponse.json({ error: 'Invalid amount' }, { status: 400 })
-    }
+    // Use totalAmount from client (already calculated with fetched product prices)
+    const amount = totalAmount;
 
     const options = {
       amount: Math.round(amount * 100), 
