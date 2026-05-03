@@ -48,7 +48,7 @@ export default function CartPage() {
   }, []);
 
   const totalPrice = cart.reduce((acc, item) => {
-    const priceStr = item.sellingPrice || "0";
+    const priceStr = productDetails[item.id]?.sellingPrice || item.sellingPrice || "0";
     const priceNum = parseFloat(priceStr.replace(/[^\d.]/g, "")) || 0;
     return acc + priceNum * item.qty;
   }, 0);

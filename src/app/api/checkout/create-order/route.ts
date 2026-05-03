@@ -7,8 +7,19 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET || '',
 })
 
-export async function POST() {
+export async function POST(request: Request) {
   try {
+    const token = request.headers.get('authorization')?.replace('Bearer ', '') || ''
+
+    if (!token) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+    }
+
+    client.setAccessToken(token)
+    if ((client.auth as any).client) {
+      (client.auth as any).client.setCustomerJWT(token)
+    }
+
     const cart = await client.carts.get()
     if (!cart || !cart.items || cart.items.length === 0) {
       return NextResponse.json({ error: 'Cart is empty' }, { status: 400 })

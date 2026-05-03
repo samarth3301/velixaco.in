@@ -43,8 +43,16 @@ export default function CheckoutPage() {
 
     try {
       if (paymentMethod === "razorpay") {
+        const token = localStorage.getItem("customer-token");
+        if (!token) {
+          throw new Error("Not authenticated");
+        }
+
         const response = await fetch("/api/checkout/create-order", {
           method: "POST",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+          },
         });
         const orderData = await response.json();
 
