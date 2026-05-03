@@ -75,7 +75,11 @@ export default function CartPage() {
                     <div key={item.id} className="flex flex-col md:flex-row gap-8 items-start py-6 border-b border-gray-100 last:border-b-0 animate-fadeIn">
                       <div className="w-full md:w-44 aspect-square bg-soft-beige rounded-2xl flex items-center justify-center p-4 relative">
                         <Link href={`/product/${item.id}`} className="block w-full h-full relative">
-                          <Image src={item.img} alt={item.name} fill sizes="(max-width: 768px) 100vw, 40vw" className="object-contain hover:scale-110 transition-transform duration-500" />
+                          {item.img ? (
+                            <Image src={item.img} alt={item.name} fill sizes="(max-width: 768px) 100vw, 40vw" className="object-contain hover:scale-110 transition-transform duration-500" />
+                          ) : (
+                            <div className="flex items-center justify-center w-full h-full text-gray-400">No image</div>
+                          )}
                         </Link>
                       </div>
                       <div className="flex-1 space-y-2">
