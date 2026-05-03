@@ -30,7 +30,8 @@ export default function CheckoutPage() {
   }
 
   const totalPrice = cart.reduce((acc, item) => {
-    const priceNum = parseFloat(item.sellingPrice.replace(/[^\d.]/g, "")) || 0;
+    const priceStr = item.sellingPrice || "0";
+    const priceNum = parseFloat(priceStr.replace(/[^\d.]/g, "")) || 0;
     return acc + priceNum * item.qty;
   }, 0);
 
