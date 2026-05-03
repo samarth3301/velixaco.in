@@ -8,10 +8,44 @@ import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { CheckCircle, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
+
+interface ProductDetails {
+  [key: string]: {
+    name: string;
+    img: string;
+    sellingPrice: string;
+  };
+}
 
 export default function CartPage() {
   const { cart, removeFromCart, updateQty, cartCount, clearCart } = useCart();
   const { authenticated } = useAuth();
+  const [productDetails, setProductDetails] = useState<ProductDetails>({});
+
+  useEffect(() => {
+    const fetchProductDetails = async () => {
+      try {
+        const response = await fetch('/api/products');
+        if (!response.ok) throw new Error('Failed to fetch products');
+        const products = await response.json();
+
+        const details: ProductDetails = {};
+        products.forEach((product: Record<string, string>) => {
+          details[product.id] = {
+            name: product.name,
+            img: product.img,
+            sellingPrice: product.sellingPrice,
+          };
+        });
+        setProductDetails(details);
+      } catch (error) {
+        console.error('Error fetching product details:', error);
+      }
+    };
+
+    fetchProductDetails();
+  }, []);
 
   const totalPrice = cart.reduce((acc, item) => {
     const priceStr = item.sellingPrice || "0";
@@ -71,12 +105,18 @@ export default function CartPage() {
                 </div>
               ) : (
                 <div className="space-y-8">
-                  {cart.map((item) => (
+                  {cart.map((item) => {
+                    const product = productDetails[item.id];
+                    const displayName = product?.name || item.name || 'Product';
+                    const displayImg = product?.img || item.img;
+                    const displayPrice = product?.sellingPrice || item.sellingPrice;
+
+                    return (
                     <div key={item.id} className="flex flex-col md:flex-row gap-8 items-start py-6 border-b border-gray-100 last:border-b-0 animate-fadeIn">
                       <div className="w-full md:w-44 aspect-square bg-soft-beige rounded-2xl flex items-center justify-center p-4 relative">
                         <Link href={`/product/${item.id}`} className="block w-full h-full relative">
-                          {item.img ? (
-                            <Image src={item.img} alt={item.name} fill sizes="(max-width: 768px) 100vw, 40vw" className="object-contain hover:scale-110 transition-transform duration-500" />
+                          {displayImg ? (
+                            <Image src={displayImg} alt={displayName} fill sizes="(max-width: 768px) 100vw, 40vw" className="object-contain hover:scale-110 transition-transform duration-500" />
                           ) : (
                             <div className="flex items-center justify-center w-full h-full text-gray-400">No image</div>
                           )}
@@ -85,9 +125,9 @@ export default function CartPage() {
                       <div className="flex-1 space-y-2">
                         <div className="flex justify-between items-start">
                           <Link href={`/product/${item.id}`}>
-                            <h3 className="text-xl font-bold text-darkest-green hover:text-blue-600 transition-colors">{item.name}</h3>
+                            <h3 className="text-xl font-bold text-darkest-green hover:text-blue-600 transition-colors">{displayName}</h3>
                           </Link>
-                          <p className="text-xl font-bold text-darkest-green">{item.sellingPrice}</p>
+                          <p className="text-xl font-bold text-darkest-green">{displayPrice}</p>
                         </div>
                         <p className="text-[10px] text-green-700 font-bold uppercase tracking-widest">In Stock</p>
                         <p className="text-[11px] text-gray-400">Eligible for FREE Shipping</p>
@@ -121,7 +161,8 @@ export default function CartPage() {
                         </div>
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
 
