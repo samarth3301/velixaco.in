@@ -5,11 +5,13 @@ import Link from "next/link";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { CheckCircle, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function CartPage() {
   const { cart, removeFromCart, updateQty, cartCount, clearCart } = useCart();
+  const { authenticated } = useAuth();
 
   const totalPrice = cart.reduce((acc, item) => {
     const priceStr = item.sellingPrice || "0";
@@ -54,14 +56,16 @@ export default function CartPage() {
                       <Link href="/" className="bg-darkest-green text-white px-8 py-4 rounded-full font-black hover:bg-black transition-all text-center text-[11px] uppercase tracking-widest shadow-lg">
                         Shop current masterworks
                       </Link>
-                      <div className="flex gap-4">
-                        <Link href="/profile" className="flex-1 bg-darkest-green text-white px-4 py-4 rounded-full font-black hover:bg-black transition-all text-center text-[10px] uppercase tracking-widest">
-                          Sign in
-                        </Link>
-                        <Link href="/profile" className="flex-1 bg-transparent border-2 border-darkest-green text-darkest-green px-4 py-4 rounded-full font-black hover:bg-darkest-green hover:text-white transition-all text-center text-[10px] uppercase tracking-widest">
-                          Register account
-                        </Link>
-                      </div>
+                      {!authenticated && (
+                        <div className="flex gap-4">
+                          <Link href="/profile" className="flex-1 bg-darkest-green text-white px-4 py-4 rounded-full font-black hover:bg-black transition-all text-center text-[10px] uppercase tracking-widest">
+                            Sign in
+                          </Link>
+                          <Link href="/profile" className="flex-1 bg-transparent border-2 border-darkest-green text-darkest-green px-4 py-4 rounded-full font-black hover:bg-darkest-green hover:text-white transition-all text-center text-[10px] uppercase tracking-widest">
+                            Register account
+                          </Link>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
