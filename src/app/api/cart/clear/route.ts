@@ -3,13 +3,16 @@ import { NextResponse } from 'next/server'
 
 export async function POST(request: Request) {
   try {
-    const { token } = await request.json()
+    const token = request.headers.get('authorization')?.replace('Bearer ', '') || ''
 
     if (!token) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
     }
 
     client.setAccessToken(token)
+    if ((client.auth as any).client) {
+      (client.auth as any).client.setCustomerJWT(token)
+    }
     const success = await client.carts.clear()
     return NextResponse.json({ success: true, result: success })
   } catch (error) {

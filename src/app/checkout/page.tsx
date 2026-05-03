@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Lock, CheckCircle, Banknote, CreditCard, ChevronUp } from "lucide-react";
+import Script from "next/script";
+import { Lock, CheckCircle, Banknote, CreditCard, ChevronUp, Loader2 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
@@ -10,12 +11,13 @@ import { useRouter } from "next/navigation";
 
 export default function CheckoutPage() {
   const { cart, cartCount, clearCart } = useCart();
-  const { authenticated, loading: authLoading } = useAuth();
+  const { user, authenticated, loading: authLoading } = useAuth();
   const router = useRouter();
 
   const [addressVerified, setAddressVerified] = useState(false);
-  const [paymentSelected, setPaymentSelected] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<"cod" | "razorpay" | null>(null);
   const [orderPlaced, setOrderPlaced] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !authenticated) {
@@ -34,16 +36,79 @@ export default function CheckoutPage() {
 
   const formattedTotal = "₹" + totalPrice.toLocaleString("en-IN") + ".00";
 
-  const handlePlaceOrder = () => {
-    if (cart.length === 0) return;
+  const handlePlaceOrder = async () => {
+    if (cart.length === 0 || !paymentMethod) return;
     
+    setIsProcessing(true);
+
+    try {
+      if (paymentMethod === "razorpay") {
+        const response = await fetch("/api/checkout/create-order", {
+          method: "POST",
+        });
+        const orderData = await response.json();
+
+        if (orderData.error) {
+          throw new Error(orderData.error);
+        }
+
+        const options = {
+          key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+          amount: orderData.amount,
+          currency: orderData.currency,
+          name: "Velixaco",
+          description: "Purchase from Velixaco",
+          order_id: orderData.id,
+          handler: async function (response: any) {
+            const verifyRes = await fetch("/api/checkout/verify-payment", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
+            });
+
+            const verifyData = await verifyRes.json();
+            if (verifyData.success) {
+              completeOrder();
+            } else {
+              alert("Payment verification failed. Please contact support.");
+            }
+          },
+          prefill: {
+            name: user?.name || "",
+            email: user?.email || "",
+          },
+          theme: {
+            color: "#0a2e2a",
+          },
+        };
+
+        const rzp = new (window as any).Razorpay(options);
+        rzp.open();
+      } else {
+        // COD logic
+        completeOrder();
+      }
+    } catch (error) {
+      console.error("Checkout error:", error);
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const completeOrder = () => {
     const orders = JSON.parse(localStorage.getItem("velixaco-orders") || "[]");
     const newOrder = {
       id: "403-" + Math.floor(Math.random() * 1000000) + "-" + Math.floor(Math.random() * 1000000),
       date: new Date().toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" }),
       total: formattedTotal,
       status: "Arriving Friday",
-      items: cart
+      items: cart,
+      paymentMethod: paymentMethod === "razorpay" ? "Prepaid" : "COD"
     };
 
     orders.unshift(newOrder);
@@ -54,6 +119,8 @@ export default function CheckoutPage() {
 
   return (
     <div className="inter outline-none bg-soft-beige min-h-screen flex flex-col">
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" />
+      
       {/* SIMPLE CHECKOUT HEADER */}
       <header className="bg-white border-b border-gray-200 py-6 px-6 md:px-12 flex items-center justify-between sticky top-0 z-[100]">
         <Link href="/" className="font-outfit text-3xl font-black text-darkest-green tracking-tighter uppercase leading-none">Velixaco</Link>
@@ -126,28 +193,46 @@ export default function CheckoutPage() {
             
             {(addressVerified) && (
               <div className="ml-8 mt-8 space-y-4 animate-fade-slide">
-                <label className="flex items-center justify-between p-5 border border-gray-100 bg-soft-beige rounded-2xl cursor-pointer hover:border-darkest-green transition-all group">
+                <label className={cn(
+                  "flex items-center justify-between p-5 border rounded-2xl cursor-pointer transition-all group",
+                  paymentMethod === "cod" ? "bg-soft-beige border-darkest-green" : "bg-white border-gray-100 hover:border-darkest-green"
+                )}>
                   <div className="flex items-center gap-5">
-                    <input type="radio" name="payment" onChange={() => setPaymentSelected(true)} className="w-5 h-5 accent-darkest-green" />
+                    <input 
+                      type="radio" 
+                      name="payment" 
+                      checked={paymentMethod === "cod"}
+                      onChange={() => setPaymentMethod("cod")} 
+                      className="w-5 h-5 accent-darkest-green" 
+                    />
                     <div>
                       <p className="text-[15px] font-bold text-black">Pay on Delivery (Cash/UPI)</p>
                       <p className="text-[11px] text-gray-500 font-medium uppercase tracking-tighter">Scan QR or pay cash at the time of delivery</p>
                     </div>
                   </div>
-                  <Banknote className="w-6 h-6 text-black opacity-20 group-hover:opacity-100 transition-opacity" />
+                  <Banknote className={cn("w-6 h-6 text-black transition-opacity", paymentMethod === "cod" ? "opacity-100" : "opacity-20 group-hover:opacity-100")} />
                 </label>
 
-                <label className="flex items-center justify-between p-5 border border-gray-100 bg-white rounded-2xl cursor-pointer hover:border-darkest-green transition-all group">
+                <label className={cn(
+                  "flex items-center justify-between p-5 border rounded-2xl cursor-pointer transition-all group",
+                  paymentMethod === "razorpay" ? "bg-soft-beige border-darkest-green" : "bg-white border-gray-100 hover:border-darkest-green"
+                )}>
                   <div className="flex items-center gap-5">
-                    <input type="radio" name="payment" onChange={() => setPaymentSelected(true)} className="w-5 h-5 accent-darkest-green" />
+                    <input 
+                      type="radio" 
+                      name="payment" 
+                      checked={paymentMethod === "razorpay"}
+                      onChange={() => setPaymentMethod("razorpay")} 
+                      className="w-5 h-5 accent-darkest-green" 
+                    />
                     <div>
-                      <p className="text-[15px] font-bold text-black">Credit or Debit Card</p>
+                      <p className="text-[15px] font-bold text-black">Online Payment (Razorpay)</p>
                       <div className="flex gap-2 mt-1">
-                        <span className="text-[10px] font-bold text-gray-400">VISA / MASTERCARD</span>
+                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Cards, UPI, NetBanking, Wallets</span>
                       </div>
                     </div>
                   </div>
-                  <CreditCard className="w-6 h-6 text-black opacity-20 group-hover:opacity-100 transition-opacity" />
+                  <CreditCard className={cn("w-6 h-6 text-black transition-opacity", paymentMethod === "razorpay" ? "opacity-100" : "opacity-20 group-hover:opacity-100")} />
                 </label>
               </div>
             )}
@@ -156,14 +241,14 @@ export default function CheckoutPage() {
           {/* STEP 3: REVIEW ITEMS */}
           <div className={cn(
             "py-8 transition-opacity duration-500",
-            !paymentSelected && "opacity-50 pointer-events-none"
+            !paymentMethod && "opacity-50 pointer-events-none"
           )}>
             <div className="flex gap-4">
               <span className="text-lg font-black text-darkest-green">3</span>
               <h2 className="text-xl font-bold text-black">Review items and shipping</h2>
             </div>
             
-            {paymentSelected && (
+            {paymentMethod && (
               <div className="ml-8 mt-8 animate-fade-slide">
                 <div className="p-6 border border-gray-100 rounded-3xl bg-soft-beige/30">
                   <p className="text-sm text-black font-medium leading-relaxed">
@@ -180,16 +265,20 @@ export default function CheckoutPage() {
         <div className="w-full lg:w-96 flex flex-col gap-6">
           <div className="bg-white rounded-3xl p-8 border border-gray-200 shadow-sm sticky top-32">
             <button 
-              disabled={!paymentSelected || cart.length === 0}
+              disabled={!paymentMethod || cart.length === 0 || isProcessing}
               onClick={handlePlaceOrder}
               className={cn(
-                "w-full py-4 rounded-full font-black text-[14px] uppercase tracking-[0.2em] shadow-xl transition-all mb-8 active:scale-95",
-                paymentSelected && cart.length > 0 
+                "w-full py-4 rounded-full font-black text-[14px] uppercase tracking-[0.2em] shadow-xl transition-all mb-8 active:scale-95 flex items-center justify-center gap-2",
+                paymentMethod && cart.length > 0 && !isProcessing
                   ? "bg-darkest-green text-white hover:opacity-90" 
                   : "bg-gray-200 text-gray-400 cursor-not-allowed"
               )}
             >
-              {paymentSelected ? "Place your order" : "Deliver to this address"}
+              {isProcessing ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                paymentMethod ? "Place your order" : "Deliver to this address"
+              )}
             </button>
             
             <div className="space-y-4 border-t border-gray-100 pt-6">

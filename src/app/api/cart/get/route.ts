@@ -10,6 +10,9 @@ export async function GET(request: Request) {
     }
 
     client.setAccessToken(token)
+    if ((client.auth as any).client) {
+      (client.auth as any).client.setCustomerJWT(token)
+    }
     const cart = await client.carts.get()
     return NextResponse.json({ success: true, cart })
   } catch (error) {

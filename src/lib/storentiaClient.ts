@@ -125,8 +125,11 @@ export async function addToCart(productId: string, quantity: number) {
 
         const response = await fetch('/api/cart/add', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ productId, quantity, token }),
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ productId, quantity }),
         })
         if (!response.ok) throw new Error('Failed to add item')
         const data = await response.json()
@@ -144,8 +147,11 @@ export async function removeFromCart(cartItemId: string) {
 
         const response = await fetch('/api/cart/remove', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ cartItemId, token }),
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ cartItemId }),
         })
         if (!response.ok) throw new Error('Failed to remove item')
         const data = await response.json()
@@ -163,8 +169,11 @@ export async function updateCartItem(cartItemId: string, quantity: number) {
 
         const response = await fetch('/api/cart/update', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ cartItemId, quantity, token }),
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ cartItemId, quantity }),
         })
         if (!response.ok) throw new Error('Failed to update item')
         const data = await response.json()
@@ -182,8 +191,11 @@ export async function clearCart() {
 
         const response = await fetch('/api/cart/clear', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token }),
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({}),
         })
         if (!response.ok) throw new Error('Failed to clear cart')
         const data = await response.json()

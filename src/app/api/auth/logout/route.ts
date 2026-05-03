@@ -4,12 +4,10 @@ import { NextResponse } from 'next/server'
 export async function POST(request: Request) {
   try {
     const authHeader = request.headers.get('Authorization')
-    if (!authHeader?.startsWith('Bearer ')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (authHeader?.startsWith('Bearer ')) {
+      const token = authHeader.slice(7)
+      client.setAccessToken(token)
     }
-
-    const token = authHeader.slice(7)
-    client.setAccessToken(token)
 
     await client.auth.logout()
     return NextResponse.json({ success: true })

@@ -1,4 +1,4 @@
-import { client } from '@/lib/storentiaClient'
+import { client, PUBLIC_STORE_TOKEN } from '@/lib/storentiaClient'
 import { NextResponse } from 'next/server'
 
 export async function POST(request: Request) {
@@ -9,11 +9,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Email and code required' }, { status: 400 })
     }
 
-    const response = await client.auth.verifyAuthenticationEmail({
-      email,
-      code,
-    })
-
+    const response = await client.auth.verifyAuthenticationEmail(email, code, PUBLIC_STORE_TOKEN)
+    console.log(response)
     client.setAccessToken(response.token)
     const user = await client.auth.getMe()
 

@@ -1,7 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useState, useEffect } from 'react'
-import { sendAuthEmail, verifyAuthEmail, logout as sdkLogout } from '@/lib/storentiaClient'
+import { sendAuthEmail, verifyAuthEmail, authenticate, logout as sdkLogout } from '@/lib/storentiaClient'
 
 interface User {
   id: string
@@ -15,6 +15,7 @@ interface AuthContextType {
   loading: boolean
   sendEmail: (email: string) => Promise<{ success: boolean; error?: string }>
   verifyEmail: (email: string, code: string) => Promise<{ success: boolean; error?: string }>
+  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>
   logout: () => void
 }
 
@@ -51,13 +52,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const verifyEmail = async (email: string, code: string) => {
     try {
       const result = await verifyAuthEmail(email, code)
-      if (result.success) {
-        setUser({ id: result.customer.id, email: result.customer.email })
+      if (result.success && result.customer) {
+        setUser({ id: result.customer.id, email: result.customer.email, name: result.customer.name })
         setAuthenticated(true)
       }
       return result
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : 'Verification failed'
+      return { success: false, error: errorMsg }
+    }
+  }
+
+  const login = async (email: string, password: string) => {
+    try {
+      const result = await authenticate(email, password)
+      if (result.success && result.user) {
+        setUser({ id: result.user.id, email: result.user.email, name: result.user.name })
+        setAuthenticated(true)
+      }
+      return result
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Login failed'
       return { success: false, error: errorMsg }
     }
   }
@@ -69,7 +84,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ user, authenticated, loading, sendEmail, verifyEmail, logout }}>
+    <AuthContext.Provider value={{ user, authenticated, loading, sendEmail, verifyEmail, login, logout }}>
       {children}
     </AuthContext.Provider>
   )
