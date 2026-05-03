@@ -129,7 +129,11 @@ export default function OrdersPage() {
                       {order.items.map((item: any, idx: number) => (
                         <div key={idx} className="flex gap-6 items-center">
                           <div className="w-20 h-20 bg-soft-beige rounded-xl p-2 border border-gray-100 relative">
-                            <Image src={item.img} alt={item.name} fill sizes="80px" className="object-contain" />
+                            {item.img ? (
+                              <Image src={item.img} alt={item.name} fill sizes="80px" className="object-contain" />
+                            ) : (
+                              <div className="flex items-center justify-center w-full h-full text-gray-400 text-xs">No image</div>
+                            )}
                           </div>
                           <div className="flex-1">
                             <Link href={`/product/${item.id}`}>
