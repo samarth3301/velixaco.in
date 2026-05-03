@@ -9,6 +9,14 @@ import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 
+interface ProductDetails {
+  [key: string]: {
+    name: string;
+    img: string;
+    sellingPrice: string;
+  };
+}
+
 export default function CheckoutPage() {
   const { cart, cartCount, clearCart } = useCart();
   const { user, authenticated, loading: authLoading } = useAuth();
@@ -18,6 +26,7 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "razorpay" | null>(null);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [productDetails, setProductDetails] = useState<ProductDetails>({});
 
   useEffect(() => {
     if (!authLoading && !authenticated) {
@@ -25,12 +34,36 @@ export default function CheckoutPage() {
     }
   }, [authenticated, authLoading, router]);
 
+  useEffect(() => {
+    const fetchProductDetails = async () => {
+      try {
+        const response = await fetch('/api/products');
+        if (!response.ok) throw new Error('Failed to fetch products');
+        const products = await response.json();
+
+        const details: ProductDetails = {};
+        products.forEach((product: Record<string, string>) => {
+          details[product.id] = {
+            name: product.name,
+            img: product.img,
+            sellingPrice: product.sellingPrice,
+          };
+        });
+        setProductDetails(details);
+      } catch (error) {
+        console.error('Error fetching product details:', error);
+      }
+    };
+
+    fetchProductDetails();
+  }, []);
+
   if (authLoading || !authenticated) {
     return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
   }
 
   const totalPrice = cart.reduce((acc, item) => {
-    const priceStr = item.sellingPrice || "0";
+    const priceStr = productDetails[item.id]?.sellingPrice || item.sellingPrice || "0";
     const priceNum = parseFloat(priceStr.replace(/[^\d.]/g, "")) || 0;
     return acc + priceNum * item.qty;
   }, 0);
