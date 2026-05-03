@@ -51,10 +51,33 @@ export async function fetchCollection(id: string) {
     }
 }
 
+export async function authenticate(email: string, password: string) {
+    try {
+        const response = await fetch('/api/auth/authenticate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
+        })
+        if (!response.ok) throw new Error('Invalid credentials')
+        const data = await response.json()
+        localStorage.setItem('customer-email', data.user.email)
+        localStorage.setItem('customer-id', data.user.id)
+        localStorage.setItem('customer-token', data.token)
+        return { success: true, user: data.user, token: data.token }
+    } catch (err) {
+        return { success: false, error: (err as Error).message }
+    }
+}
+
 export async function sendAuthEmail(email: string) {
     try {
-        const result = await (client.auth as any).sendAuthenticationEmail({ email })
-        return { success: true, result }
+        const response = await fetch('/api/auth/send-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email }),
+        })
+        if (!response.ok) throw new Error('Failed to send email')
+        return { success: true, result: await response.json() }
     } catch (err) {
         return { success: false, error: (err as Error).message }
     }
@@ -62,11 +85,17 @@ export async function sendAuthEmail(email: string) {
 
 export async function verifyAuthEmail(email: string, code: string) {
     try {
-        const result = await (client.auth as any).verifyAuthenticationEmail({ email, code })
-        const user = await (client.auth as any).getMe()
-        localStorage.setItem('customer-email', user.email)
-        localStorage.setItem('customer-id', user.id)
-        return { success: true, customer: user }
+        const response = await fetch('/api/auth/verify-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, code }),
+        })
+        if (!response.ok) throw new Error('Invalid code')
+        const data = await response.json()
+        localStorage.setItem('customer-email', data.user.email)
+        localStorage.setItem('customer-id', data.user.id)
+        localStorage.setItem('customer-token', data.token)
+        return { success: true, customer: data.user, token: data.token }
     } catch (err) {
         return { success: false, error: (err as Error).message }
     }
@@ -74,8 +103,15 @@ export async function verifyAuthEmail(email: string, code: string) {
 
 export async function getCart() {
     try {
-        const cart = await client.carts.get()
-        return cart
+        const token = localStorage.getItem('customer-token')
+        if (!token) throw new Error('Not authenticated')
+
+        const response = await fetch('/api/cart/get', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
+        if (!response.ok) throw new Error('Failed to fetch cart')
+        const data = await response.json()
+        return data.cart
     } catch (err) {
         console.error('Failed to fetch cart:', err)
         throw err
@@ -84,8 +120,17 @@ export async function getCart() {
 
 export async function addToCart(productId: string, quantity: number) {
     try {
-        const item = await client.carts.addItem({ productId, quantity })
-        return item
+        const token = localStorage.getItem('customer-token')
+        if (!token) throw new Error('Not authenticated')
+
+        const response = await fetch('/api/cart/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ productId, quantity, token }),
+        })
+        if (!response.ok) throw new Error('Failed to add item')
+        const data = await response.json()
+        return data.item
     } catch (err) {
         console.error('Failed to add item:', err)
         throw err
@@ -94,8 +139,17 @@ export async function addToCart(productId: string, quantity: number) {
 
 export async function removeFromCart(cartItemId: string) {
     try {
-        const success = await client.carts.removeItem(cartItemId)
-        return success
+        const token = localStorage.getItem('customer-token')
+        if (!token) throw new Error('Not authenticated')
+
+        const response = await fetch('/api/cart/remove', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cartItemId, token }),
+        })
+        if (!response.ok) throw new Error('Failed to remove item')
+        const data = await response.json()
+        return data.result
     } catch (err) {
         console.error('Failed to remove item:', err)
         throw err
@@ -104,8 +158,17 @@ export async function removeFromCart(cartItemId: string) {
 
 export async function updateCartItem(cartItemId: string, quantity: number) {
     try {
-        const item = await client.carts.updateItem({ cartItemId, quantity })
-        return item
+        const token = localStorage.getItem('customer-token')
+        if (!token) throw new Error('Not authenticated')
+
+        const response = await fetch('/api/cart/update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cartItemId, quantity, token }),
+        })
+        if (!response.ok) throw new Error('Failed to update item')
+        const data = await response.json()
+        return data.item
     } catch (err) {
         console.error('Failed to update item:', err)
         throw err
@@ -114,8 +177,17 @@ export async function updateCartItem(cartItemId: string, quantity: number) {
 
 export async function clearCart() {
     try {
-        const success = await client.carts.clear()
-        return success
+        const token = localStorage.getItem('customer-token')
+        if (!token) throw new Error('Not authenticated')
+
+        const response = await fetch('/api/cart/clear', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token }),
+        })
+        if (!response.ok) throw new Error('Failed to clear cart')
+        const data = await response.json()
+        return data.result
     } catch (err) {
         console.error('Failed to clear cart:', err)
         throw err
@@ -126,4 +198,5 @@ export function logout() {
     client.auth.logout()
     localStorage.removeItem('customer-email')
     localStorage.removeItem('customer-id')
+    localStorage.removeItem('customer-token')
 }
