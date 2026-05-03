@@ -39,7 +39,7 @@ export const WhyChooseUs = () => {
 
           {/* Center Image (Ruby Watch) */}
           <div className="relative w-full lg:w-1/3 h-[400px] md:h-[500px] lg:h-[600px] flex justify-center py-8 lg:py-0 z-30 translate-y-4 lg:translate-y-0 scale-110 md:scale-[1.15]">
-            <Image src="/ruby_watch.png" alt="Ruby Red Luxury Watch" fill className="object-contain drop-shadow-2xl" />
+            <Image src="/ruby_watch.png" alt="Ruby Red Luxury Watch" fill sizes="(max-width: 768px) 100vw, 33vw" className="object-contain drop-shadow-2xl" />
           </div>
 
           {/* Right Cards */}

@@ -187,7 +187,7 @@
 
     "@rtsao/scc": ["@rtsao/scc@1.1.0", "", {}, "sha512-zt6OdqaDoOnJ1ZYsCYGt9YmWzDXl4vQdKTyJev62gFhRGKdx7mcT54V9KIjg+d2wi9EXsPvAPKe7i7WjfVWB8g=="],
 
-    "@storentia/sdk": ["@storentia/sdk@0.1.6", "", {}, "sha512-ibM/01w+ortYsNFW86r+AN1qXiJFbUPeY93QPUYqIdHfsQNQu+MjArM7JYY6KcTt5LcO2G3edko0vONF5pnl3g=="],
+    "@storentia/sdk": ["@storentia/sdk@0.1.7", "", {}, "sha512-SB5VoYTCiGgJ76hrW95ozVDXLUbKD3uGgZPiandfVlcdnZAeNC9g0KoMa65vFgD/yQENZFmoIq23ibP0U7EuHw=="],
 
     "@swc/helpers": ["@swc/helpers@0.5.15", "", { "dependencies": { "tslib": "^2.8.0" } }, "sha512-JQ5TuMi45Owi4/BIMAJBoSQoOJu12oOk/gADqlcUL9JEdHB8vyjUSsxqeNXnmXHjYKMi2WcYtezGEEhqUI/E2g=="],
 

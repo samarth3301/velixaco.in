@@ -71,7 +71,7 @@ export default function TeamPage() {
                   member.color,
                   "group-hover:bg-[#5E8357]"
                 )}>
-                  <Image src={member.img} alt={member.name} fill className="object-cover group-hover:scale-110 transition-transform duration-1000 opacity-90" />
+                  <Image src={member.img} alt={member.name} fill sizes="(max-width: 768px) 50vw, 25vw" className="object-cover group-hover:scale-110 transition-transform duration-1000 opacity-90" />
                   
                   <div className={cn(
                     "absolute inset-x-0 bottom-0 py-10 flex flex-col items-center text-center rounded-t-[100px] shadow-[0_-10px_30px_rgba(0,0,0,0.05)] transition-all duration-700 z-20",
@@ -114,7 +114,7 @@ export default function TeamPage() {
               ].map((insight, i) => (
                 <Reveal key={i} delay={i * 100} className="flex items-start gap-8">
                   <div className="w-40 h-40 flex-shrink-0 bg-darkest-green rounded-[40px] overflow-hidden relative">
-                    <Image src={insight.img} alt={insight.title} fill className="object-cover opacity-80" />
+                    <Image src={insight.img} alt={insight.title} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover opacity-80" />
                   </div>
                   <div className="flex flex-col gap-3 pt-2">
                     <h3 className="font-outfit text-2xl font-black uppercase tracking-tight leading-tight">{insight.title}</h3>
@@ -127,7 +127,7 @@ export default function TeamPage() {
             {/* Right */}
             <Reveal delay={300} className="lg:w-1/2 flex flex-col gap-8">
               <div className="relative aspect-[16/10] bg-darkest-green rounded-[56px] overflow-hidden group p-12">
-                <Image src="/watch_center.png" alt="Feature" fill className="object-contain group-hover:scale-105 transition-transform duration-1000" />
+                <Image src="/watch_center.png" alt="Feature" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-contain group-hover:scale-105 transition-transform duration-1000" />
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                   <div className="relative flex h-32 w-32 items-center justify-center">
                     <Heart className="w-12 h-12 text-white/20 animate-pulse" />

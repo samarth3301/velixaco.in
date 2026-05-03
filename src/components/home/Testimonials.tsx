@@ -60,7 +60,7 @@ export const Testimonials = () => {
           {/* Model Image Wrapper to Center in Box */}
           <div className="absolute right-0 bottom-0 w-[95%] lg:w-[85%] h-full flex justify-center items-end z-10">
             <div className="relative w-full h-[85%]">
-                <Image src="/banner_man.png" alt="Male Model Viewing Watch" fill className="object-contain object-bottom drop-shadow-2xl" />
+                <Image src="/banner_man.png" alt="Male Model Viewing Watch" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-contain object-bottom drop-shadow-2xl" />
             </div>
           </div>
         </div>

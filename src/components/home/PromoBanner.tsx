@@ -24,7 +24,7 @@ export const PromoBanner = () => {
           {/* Right: Image (Watch) */}
           <div className="flex-1 relative flex justify-end items-center h-full w-full py-8 md:py-0">
             <div className="relative h-[120%] md:h-[130%] w-full flex justify-end translate-x-4 lg:translate-x-12 translate-y-4 md:translate-y-0">
-                <Image src="/banner_watch.png" alt="Promo Watch" fill className="object-contain drop-shadow-2xl" />
+                <Image src="/banner_watch.png" alt="Promo Watch" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-contain drop-shadow-2xl" />
             </div>
           </div>
 

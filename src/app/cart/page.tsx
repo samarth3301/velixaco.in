@@ -43,7 +43,7 @@ export default function CartPage() {
                   <div className="w-full md:w-3/5 group cursor-pointer">
                     <Link href="/">
                       <div className="relative aspect-[16/9] w-full transform group-hover:scale-[1.02] transition-transform duration-500">
-                        <Image src="/empty_cart.png" alt="Your Cart is Empty" fill className="object-contain" />
+                        <Image src="/empty_cart.png" alt="Your Cart is Empty" fill sizes="(max-width: 768px) 100vw, 60vw" className="object-contain" />
                       </div>
                     </Link>
                   </div>
@@ -71,7 +71,7 @@ export default function CartPage() {
                     <div key={item.id} className="flex flex-col md:flex-row gap-8 items-start py-6 border-b border-gray-100 last:border-b-0 animate-fadeIn">
                       <div className="w-full md:w-44 aspect-square bg-soft-beige rounded-2xl flex items-center justify-center p-4 relative">
                         <Link href={`/product/${item.id}`} className="block w-full h-full relative">
-                          <Image src={item.img} alt={item.name} fill className="object-contain hover:scale-110 transition-transform duration-500" />
+                          <Image src={item.img} alt={item.name} fill sizes="(max-width: 768px) 100vw, 40vw" className="object-contain hover:scale-110 transition-transform duration-500" />
                         </Link>
                       </div>
                       <div className="flex-1 space-y-2">
