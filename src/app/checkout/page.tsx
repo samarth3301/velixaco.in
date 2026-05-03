@@ -2,18 +2,30 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Lock, CheckCircle, Banknote, CreditCard, Smartphone, ChevronUp } from "lucide-react";
+import { Lock, CheckCircle, Banknote, CreditCard, ChevronUp } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 
 export default function CheckoutPage() {
   const { cart, cartCount, clearCart } = useCart();
+  const { authenticated, loading: authLoading } = useAuth();
   const router = useRouter();
-  
+
   const [addressVerified, setAddressVerified] = useState(false);
   const [paymentSelected, setPaymentSelected] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
+
+  useEffect(() => {
+    if (!authLoading && !authenticated) {
+      router.push('/login');
+    }
+  }, [authenticated, authLoading, router]);
+
+  if (authLoading || !authenticated) {
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+  }
 
   const totalPrice = cart.reduce((acc, item) => {
     const priceNum = parseFloat(item.sellingPrice.replace(/[^\d.]/g, "")) || 0;

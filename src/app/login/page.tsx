@@ -1,145 +1,146 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { useAuth } from '@/contexts/AuthContext'
-import { Header } from '@/components/layout/Header'
-import { Footer } from '@/components/layout/Footer'
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
+import { Header } from "@/components/layout/Header";
+import { Footer } from "@/components/layout/Footer";
+import { Loader } from "lucide-react";
 
 export default function LoginPage() {
-  const router = useRouter()
-  const { sendEmail, verifyEmail } = useAuth()
-  const [step, setStep] = useState<'email' | 'otp'>('email')
-  const [email, setEmail] = useState('')
-  const [name, setName] = useState('')
-  const [code, setCode] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const router = useRouter();
+  const { sendEmail, verifyEmail, authenticated } = useAuth();
+  const [step, setStep] = useState<"email" | "code">("email");
+  const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  if (authenticated) {
+    router.push("/profile");
+    return null;
+  }
 
   const handleSendEmail = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
+    e.preventDefault();
+    setError("");
+    setLoading(true);
 
     try {
-      await sendEmail(email, name)
-      setStep('otp')
+      const result = await sendEmail(email);
+      if (result.success) {
+        setStep("code");
+      } else {
+        setError(result.error || "Failed to send email");
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to send email')
+      setError(err instanceof Error ? err.message : "Failed to send email");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-  const handleVerifyOtp = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
+  const handleVerifyCode = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
 
     try {
-      await verifyEmail(email, code)
-      router.push('/')
+      const result = await verifyEmail(email, code);
+      if (result.success) {
+        router.push("/profile");
+      } else {
+        setError(result.error || "Invalid code");
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Invalid code')
+      setError(err instanceof Error ? err.message : "Verification failed");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
-    <main className="flex min-h-screen flex-col">
-      <Header variant="dark" />
-      <div className="flex-1 flex items-center justify-center py-12 px-6">
-        <div className="w-full max-w-md">
-          <div className="bg-white rounded-lg shadow-lg p-8">
-            <h1 className="text-3xl font-bold text-darkest-green mb-6">Sign In</h1>
+    <div className="inter outline-none bg-soft-beige min-h-screen flex flex-col">
+      <Header variant="light" />
 
-            {step === 'email' ? (
-              <form onSubmit={handleSendEmail} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-deep-green focus:border-transparent"
-                    placeholder="your@email.com"
-                  />
-                </div>
+      <main className="flex-1 flex items-center justify-center px-6 py-20">
+        <div className="w-full max-w-md bg-white rounded-3xl p-8 shadow-sm border border-gray-200">
+          <h1 className="text-3xl font-black text-darkest-green mb-2">Login</h1>
+          <p className="text-sm text-gray-600 mb-8">Sign in to your Velixaco account</p>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Name (optional)
-                  </label>
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-deep-green focus:border-transparent"
-                    placeholder="Your name"
-                  />
-                </div>
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
+              <p className="text-sm text-red-700 font-medium">{error}</p>
+            </div>
+          )}
 
-                {error && <div className="text-red-500 text-sm">{error}</div>}
+          {step === "email" ? (
+            <form onSubmit={handleSendEmail} className="space-y-6">
+              <div>
+                <label className="block text-sm font-bold text-black mb-2">Email Address</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  required
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-darkest-green bg-white text-black placeholder-gray-400"
+                />
+              </div>
 
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-deep-green text-white py-2 rounded-lg font-bold hover:opacity-90 disabled:opacity-50"
-                >
-                  {loading ? 'Sending...' : 'Send OTP'}
-                </button>
-              </form>
-            ) : (
-              <form onSubmit={handleVerifyOtp} className="space-y-4">
-                <p className="text-gray-600 text-sm">
-                  Enter the OTP sent to <strong>{email}</strong>
-                </p>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-darkest-green text-white py-3 rounded-full font-black text-sm uppercase tracking-[0.1em] hover:opacity-90 disabled:opacity-60 transition-all flex items-center justify-center gap-2"
+              >
+                {loading && <Loader className="w-4 h-4 animate-spin" />}
+                {loading ? "Sending code..." : "Send Code"}
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={handleVerifyCode} className="space-y-6">
+              <p className="text-sm text-gray-600">
+                We sent a code to <strong>{email}</strong>
+              </p>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    OTP Code
-                  </label>
-                  <input
-                    type="text"
-                    value={code}
-                    onChange={(e) => setCode(e.target.value)}
-                    required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-deep-green focus:border-transparent"
-                    placeholder="000000"
-                  />
-                </div>
+              <div>
+                <label className="block text-sm font-bold text-black mb-2">Verification Code</label>
+                <input
+                  type="text"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  placeholder="000000"
+                  required
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-darkest-green bg-white text-black placeholder-gray-400"
+                />
+              </div>
 
-                {error && <div className="text-red-500 text-sm">{error}</div>}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-darkest-green text-white py-3 rounded-full font-black text-sm uppercase tracking-[0.1em] hover:opacity-90 disabled:opacity-60 transition-all flex items-center justify-center gap-2"
+              >
+                {loading && <Loader className="w-4 h-4 animate-spin" />}
+                {loading ? "Verifying..." : "Verify Code"}
+              </button>
 
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-deep-green text-white py-2 rounded-lg font-bold hover:opacity-90 disabled:opacity-50"
-                >
-                  {loading ? 'Verifying...' : 'Verify OTP'}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setStep('email')
-                    setCode('')
-                    setError('')
-                  }}
-                  className="w-full text-deep-green py-2 font-bold hover:underline"
-                >
-                  Back
-                </button>
-              </form>
-            )}
-          </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setStep("email");
+                  setCode("");
+                  setError("");
+                }}
+                className="w-full text-darkest-green py-3 font-black text-sm uppercase tracking-[0.1em] hover:opacity-70 transition-all"
+              >
+                Back
+              </button>
+            </form>
+          )}
         </div>
-      </div>
+      </main>
+
       <Footer />
-    </main>
-  )
+    </div>
+  );
 }
