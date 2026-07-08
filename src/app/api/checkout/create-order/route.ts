@@ -21,8 +21,9 @@ export async function POST(request: Request) {
     }
 
     client.setAccessToken(token)
-    if ((client.auth as any).client) {
-      (client.auth as any).client.setCustomerJWT(token)
+    const authClient = (client.auth as unknown)?.client
+    if (authClient) {
+      authClient.setCustomerJWT(token)
     }
 
     const cart = await client.carts.get()
